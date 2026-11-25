@@ -176,6 +176,23 @@ html.glass-mode .panel,html.glass-mode .stat,html.glass-mode .item,html.glass-mo
    const appPanel=panels[3];if(appPanel){appPanel.querySelector("h3").textContent=v[7];appPanel.querySelector("p").textContent=v[8];}
    const labels=[v[9],v[10],"Google"];document.querySelectorAll(".settings-account-row span").forEach((el,i)=>el.textContent=labels[i]||"Google");
    $("disconnect-google-btn").textContent=v[13];$("change-password-btn").textContent=v[14];$("settings-logout-btn").textContent=v[15];
+   const dashboardWords={
+    fr:{tabs:["Publications","Commentaires","Photos","Messages","Membres & bans"],hints:["Supprime les publications qui ne doivent plus apparaître.","Modère les commentaires sous les publications.","Gère les photos partagées dans la galerie.","Gère les messages du chat de classe.","Consulte les membres et gère les bannissements."],title:"Tableau de bord",refresh:"Actualiser",logout:"Déconnexion",login:"Administration",loginHint:"Connecte-toi avec ton compte administrateur de la classe."},
+    en:{tabs:["Posts","Comments","Photos","Messages","Members & bans"],hints:["Delete posts that should no longer appear.","Moderate comments under posts.","Manage photos shared in the gallery.","Manage class chat messages.","View members and manage bans."],title:"Dashboard",refresh:"Refresh",logout:"Log out",login:"Administration",loginHint:"Sign in with your class administrator account."},
+    nl:{tabs:["Berichten","Reacties","Foto’s","Berichten","Leden & bans"],hints:["Verwijder berichten die niet meer zichtbaar moeten zijn.","Modereer reacties onder berichten.","Beheer gedeelde galerijfoto’s.","Beheer klaschatberichten.","Bekijk leden en beheer verbanningen."],title:"Dashboard",refresh:"Vernieuwen",logout:"Uitloggen",login:"Beheer",loginHint:"Log in met je klasbeheeraccount."},
+    pl:{tabs:["Posty","Komentarze","Zdjęcia","Wiadomości","Członkowie i blokady"],hints:["Usuń posty, które nie powinny być już widoczne.","Moderuj komentarze pod postami.","Zarządzaj zdjęciami w galerii.","Zarządzaj wiadomościami czatu klasy.","Przeglądaj członków i blokady."],title:"Panel",refresh:"Odśwież",logout:"Wyloguj",login:"Administracja",loginHint:"Zaloguj się kontem administratora klasy."},
+    de:{tabs:["Beiträge","Kommentare","Fotos","Nachrichten","Mitglieder & Sperren"],hints:["Beiträge entfernen, die nicht mehr angezeigt werden sollen.","Kommentare unter Beiträgen moderieren.","Geteilte Galeriefotos verwalten.","Klassennachrichten verwalten.","Mitglieder anzeigen und Sperren verwalten."],title:"Dashboard",refresh:"Aktualisieren",logout:"Abmelden",login:"Administration",loginHint:"Mit dem Administratorkonto der Klasse anmelden."},
+    es:{tabs:["Publicaciones","Comentarios","Fotos","Mensajes","Miembros y bloqueos"],hints:["Elimina publicaciones que ya no deban aparecer.","Modera los comentarios de las publicaciones.","Gestiona las fotos compartidas en la galería.","Gestiona los mensajes del chat de clase.","Consulta miembros y gestiona bloqueos."],title:"Panel",refresh:"Actualizar",logout:"Cerrar sesión",login:"Administración",loginHint:"Inicia sesión con tu cuenta de administrador de clase."},
+    it:{tabs:["Post","Commenti","Foto","Messaggi","Membri e blocchi"],hints:["Elimina i post che non devono più apparire.","Modera i commenti sotto i post.","Gestisci le foto condivise nella galleria.","Gestisci i messaggi della chat di classe.","Visualizza i membri e gestisci i blocchi."],title:"Pannello",refresh:"Aggiorna",logout:"Esci",login:"Amministrazione",loginHint:"Accedi con il tuo account amministratore della classe."}
+   };
+   const dw=dashboardWords[lang]||dashboardWords.fr;
+   Object.keys(labels).forEach((k,i)=>{labels[k]=dw.tabs[i];hints[k]=dw.hints[i];});
+   document.querySelectorAll("[data-tab]").forEach((b,i)=>b.textContent=dw.tabs[i]);
+   $("refresh").textContent=dw.refresh;$("logout").textContent=dw.logout;
+   $("appview").querySelector("header h1").textContent=dw.title;
+   $("loginview").querySelector("h1").textContent=dw.login;
+   $("loginview").querySelector("p").textContent=dw.loginHint;
+   if(data)renderTab();
    document.querySelectorAll("[data-lang]").forEach(b=>b.classList.toggle("active",b.dataset.lang===lang));
    localStorage.setItem("alu_lang",lang);
   }
