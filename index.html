@@ -100,8 +100,8 @@ html.glass-mode .panel,html.glass-mode .stat,html.glass-mode .item,html.glass-mo
    <button type="button" id="disconnect-google-btn" class="settings-action-btn">↗ Déconnecter Google</button>
    <button type="button" id="change-password-btn" class="settings-action-btn">🔒 Changer mon mot de passe</button>
    <button type="button" id="settings-logout-btn" class="settings-action-btn">⇥ Se déconnecter</button>
-   <button type="button" id="delete-account-btn" class="settings-action-btn danger" disabled title="La suppression sécurisée du compte n’est pas encore configurée pour ce projet">Supprimer définitivement mon compte (indisponible)</button>
-   <p class="settings-help-text">Un code de vérification sera envoyé par e-mail pour les opérations sensibles. La suppression de compte nécessite une procédure serveur dédiée qui n’est pas encore configurée sur ce projet.</p>
+   <button type="button" id="delete-account-btn" class="settings-action-btn danger">🗑 Supprimer définitivement mon compte</button>
+   <p class="settings-help-text">Cette action efface définitivement ton compte, tes publications, commentaires, messages et photos. Si tu es le dernier administrateur, il faudra d’abord désigner un autre administrateur. Le modèle e-mail « Magic Link » de Supabase doit contenir {{ .Token }} pour envoyer un code à 6 chiffres.</p>
   </section>
   <section class="settings-card settings-category-panel" data-settings-panel="language" style="display:none">
    <div class="settings-card-heading"><span>文</span><div><h3>Langue</h3><p>Choisissez la langue de l’application</p></div></div>
@@ -142,7 +142,7 @@ html.glass-mode .panel,html.glass-mode .stat,html.glass-mode .item,html.glass-mo
   const labels = {posts:"Publications",comments:"Commentaires",photos:"Photos",messages:"Messages",members:"Membres & bannissements"};
   const hints = {posts:"Supprime les publications qui ne doivent plus apparaître.",comments:"Modère les commentaires sous les publications.",photos:"Gère les photos partagées dans la galerie.",messages:"Gère les messages du chat de classe.",members:"Consulte les membres et gère les bannissements."};
 
-  let accountSecurityFlow=null, accountVerifiedForAction=false, accountVerifiedNonce=null;
+  let accountSecurityFlow=null, accountVerifiedForAction=false, accountVerifiedNonce=null, deletionAuthClient=null, deletionExpectedUserId=null;
   const accentThemes={
    white:["#e3e3e3","#e3e3e3","rgba(227,227,227,.14)"],red:["#f87171","#ef4444","rgba(239,68,68,.14)"],
    green:["#4ade80","#22c55e","rgba(34,197,94,.14)"],blue:["#60a5fa","#3b82f6","rgba(59,130,246,.14)"],
@@ -247,6 +247,45 @@ html.glass-mode .panel,html.glass-mode .stat,html.glass-mode .item,html.glass-mo
    const {error}=await db.auth.updateUser({password:p,nonce:accountVerifiedNonce});if(error)throw error;
    accountVerifiedForAction=false;accountVerifiedNonce=null;$("account-security-modal").classList.add("hidden");alert("Mot de passe modifié avec succès.");
   }
+  function openDeleteAccountModal(){
+   if(!session?.user?.id||!session.user.email)throw new Error("Reconnecte-toi avant de supprimer ton compte.");
+   accountSecurityFlow="delete-account";deletionExpectedUserId=session.user.id;
+   deletionAuthClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});
+   $("account-modal-email").value=session.user.email;$("account-modal-email").readOnly=true;
+   $("account-modal-code").value="";$("account-new-password").value="";$("account-confirm-password").value="";
+   $("account-code-step").classList.add("hidden");$("account-password-step").classList.add("hidden");$("account-send-code-btn").classList.remove("hidden");
+   $("account-send-code-btn").textContent="Envoyer le code";
+   $("account-modal-title").textContent="Supprimer définitivement mon compte";
+   $("account-modal-description").textContent="Un code sera envoyé à ton adresse e-mail. La confirmation supprimera aussi tes publications, commentaires, messages et photos. Cette action est irréversible.";
+   $("account-security-modal").classList.remove("hidden");
+  }
+  async function sendDeletionCode(){
+   const {data:userData,error:userError}=await db.auth.getUser();if(userError)throw userError;
+   if(!userData.user||userData.user.id!==deletionExpectedUserId)throw new Error("Le compte connecté a changé. Recommence.");
+   const {error}=await deletionAuthClient.auth.signInWithOtp({email:userData.user.email,options:{shouldCreateUser:false}});
+   if(error)throw error;
+   $("account-code-step").classList.remove("hidden");$("account-send-code-btn").textContent="Renvoyer le code";
+   $("account-modal-description").textContent="Code envoyé. Vérifie aussi tes courriers indésirables.";
+  }
+  async function verifyDeletionCode(){
+   const token=$("account-modal-code").value.replace(/\D/g,"").trim();
+   if(!/^\d{6}$/.test(token))throw new Error("Saisis le code à 6 chiffres reçu par e-mail.");
+   const email=$("account-modal-email").value;
+   const {data:verified,error}=await deletionAuthClient.auth.verifyOtp({email,token,type:"email"});
+   if(error)throw error;
+   if(!verified.user||verified.user.id!==deletionExpectedUserId||!verified.session?.access_token)throw new Error("Le code ne correspond pas au compte actuellement connecté.");
+   const confirmed=confirm("DERNIÈRE CONFIRMATION\n\nSupprimer définitivement ton compte ET toutes tes publications, commentaires, messages et photos ? Cette action ne peut pas être annulée.");
+   if(!confirmed)return;
+   const response=await fetch(SUPABASE_URL+"/functions/v1/delete-own-account",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+verified.session.access_token,"apikey":SUPABASE_KEY},body:JSON.stringify({expected_user_id:deletionExpectedUserId})});
+   const result=await response.json().catch(()=>({}));
+   if(!response.ok)throw new Error(result.error||"La suppression a échoué ("+response.status+").");
+   try{await deletionAuthClient.auth.signOut({scope:"local"});}catch(_){}
+   try{await db.auth.signOut({scope:"local"});}catch(_){}
+   session=null;data=null;deletionAuthClient=null;deletionExpectedUserId=null;
+   $("account-security-modal").classList.add("hidden");$("settings-screen").classList.remove("open");$("settings-screen").setAttribute("aria-hidden","true");
+   $("appview").classList.add("hidden");$("loginview").classList.remove("hidden");
+   loginStatus("Compte supprimé définitivement. Tes publications, commentaires, messages et photos ont aussi été supprimés.","ok");
+  }
   function wireSettings(){
    $("settings-open").addEventListener("click",()=>{$("settings-screen").classList.add("open");$("settings-screen").setAttribute("aria-hidden","false");showSettingsCategories();});
    $("settings-back-btn").addEventListener("click",()=>{$("settings-screen").classList.remove("open");$("settings-screen").setAttribute("aria-hidden","true");});
@@ -256,10 +295,11 @@ html.glass-mode .panel,html.glass-mode .stat,html.glass-mode .item,html.glass-mo
    document.querySelectorAll("[data-color]").forEach(b=>b.addEventListener("click",()=>applyAccentColor(b.dataset.color)));
    $("glass-mode-toggle").addEventListener("change",()=>{const on=$("glass-mode-toggle").checked;document.documentElement.classList.toggle("glass-mode",on);localStorage.setItem("alu_glass_enabled",on?"1":"0");});
    $("change-password-btn").addEventListener("click",openSecurityModal);
+   $("delete-account-btn").addEventListener("click",()=>{try{openDeleteAccountModal();}catch(e){status(e.message,"error");}});
    $("disconnect-google-btn").addEventListener("click",async()=>{if(!confirm("Déconnecter Google de ce compte ?"))return;const {data:u,error}=await db.auth.getUser();if(error)throw error;const ids=u.user?.identities||[],identity=ids.find(x=>x.provider==="google");if(!identity||ids.length<2)throw new Error("Ajoute une autre méthode de connexion avant de déconnecter Google.");const {error:unlinkError}=await db.auth.unlinkIdentity(identity);if(unlinkError)throw unlinkError;await refreshAccountSettings();alert("Google a été déconnecté.");});
    $("settings-logout-btn").addEventListener("click",async()=>{if(!confirm("Se déconnecter ?"))return;const {error}=await db.auth.signOut();if(error)alert(error.message);});
-   $("account-send-code-btn").addEventListener("click",async e=>{e.currentTarget.disabled=true;try{await sendVerificationCode();}catch(x){alert(x.message);}finally{e.currentTarget.disabled=false;}});
-   $("account-verify-code-btn").addEventListener("click",async e=>{e.currentTarget.disabled=true;try{await verifyVerificationCode();}catch(x){alert(x.message);}finally{e.currentTarget.disabled=false;}});
+   $("account-send-code-btn").addEventListener("click",async e=>{e.currentTarget.disabled=true;try{if(accountSecurityFlow==="delete-account")await sendDeletionCode();else await sendVerificationCode();}catch(x){alert(x.message);}finally{e.currentTarget.disabled=false;}});
+   $("account-verify-code-btn").addEventListener("click",async e=>{e.currentTarget.disabled=true;try{if(accountSecurityFlow==="delete-account")await verifyDeletionCode();else await verifyVerificationCode();}catch(x){alert(x.message);}finally{e.currentTarget.disabled=false;}});
    $("account-save-password-btn").addEventListener("click",async e=>{e.currentTarget.disabled=true;try{await saveNewPassword();}catch(x){alert(x.message);}finally{e.currentTarget.disabled=false;}});
    $("account-modal-cancel-btn").addEventListener("click",()=>$("account-security-modal").classList.add("hidden"));
    applyAccentColor(localStorage.getItem("alu_accent_color")||"white");
