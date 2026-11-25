@@ -7,6 +7,60 @@
 <style>
 :root{color-scheme:dark;--bg:#0b1020;--panel:#141d32;--line:#293753;--text:#edf2ff;--muted:#9ba9c4;--accent:#829bff;--red:#f07887;--green:#52d6aa}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#1b2b4d 0,#0b1020 55%);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}button,input{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:11px;padding:10px 14px;background:#202d49;color:var(--text)}button:hover{filter:brightness(1.15)}button:disabled{opacity:.45;cursor:wait}.primary{background:var(--accent);color:#0a1020;border:0;font-weight:700}.danger{border-color:#75404d;color:#ffb2bb;background:#3a202d}.safe{border-color:#28604e;color:#8de6c5;background:#16362e}.muted{color:var(--muted)}.hidden{display:none!important}.wrap{max-width:1150px;margin:auto;padding:24px}.panel{background:#141d32eF;border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 18px 60px #0003}.login{max-width:420px;margin:10vh auto}.brand{font-size:13px;letter-spacing:.16em;color:#a9b9e8;font-weight:800}.login h1{font-size:28px;margin:8px 0 4px}.field{display:block;width:100%;padding:13px 14px;margin:8px 0 14px;background:#0c1426;border:1px solid var(--line);border-radius:10px;color:var(--text)}label{font-size:13px;color:var(--muted)}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:20px}.top h1{margin:4px 0;font-size:25px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.tab.active{background:var(--accent);color:#091020;border-color:transparent;font-weight:800}.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:14px 0}.stat{background:#0e172a;border:1px solid var(--line);padding:14px;border-radius:13px}.stat b{display:block;font-size:25px}.stat span{font-size:12px;color:var(--muted)}.items{display:grid;gap:10px}.item{padding:15px;background:#0e172a;border:1px solid var(--line);border-radius:13px;min-width:0}.itemhead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.item p{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0}.meta{font-size:12px;color:var(--muted);overflow-wrap:anywhere}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.empty{padding:28px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}.status{min-height:24px;color:var(--muted);margin:10px 0}.status.error{color:#ff9eaa}.status.ok{color:var(--green)}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row .field{max-width:220px;margin:0}.member{display:flex;justify-content:space-between;gap:12px;align-items:center}.pill{font-size:11px;padding:3px 8px;border-radius:99px;background:#273653;color:#c7d4f5}.pill.admin{background:#3d315b;color:#dfc9ff}@media(max-width:720px){.wrap{padding:14px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.top{align-items:flex-start}.top h1{font-size:21px}.panel{padding:14px}}
+
+/* Aluetoo Mobile settings */
+:root{--accent:#e3e3e3;--accent-strong:#e3e3e3;--accent-soft:rgba(227,227,227,.14);--glass-blur:18px;--glass-alpha:.82}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#settings-open{font-size:19px;padding:9px 12px}
+#settings-screen{display:none;position:fixed;inset:0;z-index:80;background:#131314;color:#e8eaed;overflow:auto;padding:0 18px 30px}
+#settings-screen.open{display:block}
+.settings-header{position:sticky;top:0;z-index:2;display:flex;align-items:center;min-height:64px;background:#131314;border-bottom:1px solid #30343b}
+.settings-header button{border:0;background:transparent;font-size:22px;padding:8px 12px 8px 0}
+.settings-title{font-size:20px;font-weight:650;margin:0}
+.settings-content{max-width:760px;margin:auto}
+.settings-organized{display:flex;flex-direction:column;gap:16px;padding-top:18px}
+.settings-category-menu{display:flex;flex-direction:column;gap:10px}
+.settings-category-tile{display:flex;align-items:center;gap:14px;width:100%;padding:17px;border:1px solid #30343b;border-radius:15px;background:linear-gradient(145deg,#1d1f22,#18191b);color:#e8eaed;text-align:left}
+.settings-category-tile>span:first-child{color:var(--accent);font-size:24px}
+.settings-category-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}
+.settings-category-copy strong{font-size:.95rem;font-weight:650}
+.settings-category-copy small{color:#9aa0a6;font-size:.76rem}
+.settings-chevron{color:#9aa0a6}
+.settings-category-back{margin-right:10px}
+.settings-card{padding:18px;border:1px solid #30343b;border-radius:18px;background:linear-gradient(145deg,#1d1f22,#18191b)}
+.settings-card-heading{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.settings-card-heading>span{color:var(--accent);font-size:23px}
+.settings-card-heading h3{margin:0;font-size:1rem}
+.settings-card-heading p{margin:3px 0 0;color:#9aa0a6;font-size:.78rem}
+.settings-account-row{display:flex;justify-content:space-between;gap:14px;padding:12px 0;border-bottom:1px solid #30343b;font-size:.84rem}
+.settings-account-row span{color:#9aa0a6}
+.settings-account-row strong{text-align:right;overflow-wrap:anywhere;font-weight:550}
+.settings-action-btn{display:flex;align-items:center;gap:10px;width:100%;padding:12px 13px;margin-top:8px;border:1px solid #383b40;border-radius:12px;color:#e8eaed;background:#232528;text-align:left;font-size:.86rem}
+.settings-action-btn.danger{color:#fca5a5;border-color:rgba(239,68,68,.35)}
+.settings-help-text{color:#9aa0a6;font-size:.74rem;line-height:1.5;margin:10px 2px 0}
+.settings-language-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.settings-language-grid button{min-width:0;text-align:left;justify-content:flex-start}
+.alu-accent-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.alu-color-swatch{position:relative;height:62px;border-radius:13px;color:#111;font-size:12px;font-weight:700;text-shadow:0 1px 2px #fff8}
+.alu-color-swatch.active{outline:3px solid var(--accent);outline-offset:2px}
+.settings-appearance-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0}
+.settings-appearance-row strong{display:block;font-size:.9rem}
+.settings-appearance-row small{display:block;margin-top:4px;color:#9aa0a6;font-size:.76rem;line-height:1.45}
+.settings-switch{position:relative;flex:0 0 auto;width:48px;height:28px}
+.settings-switch input{position:absolute;opacity:0;width:1px;height:1px}
+.settings-switch-track{position:absolute;inset:0;border-radius:99px;background:#45484d;cursor:pointer}
+.settings-switch-track:after{content:"";position:absolute;width:20px;height:20px;left:4px;top:4px;border-radius:50%;background:#fff;transition:transform .2s}
+.settings-switch input:checked+.settings-switch-track{background:var(--accent-strong)}
+.settings-switch input:checked+.settings-switch-track:after{transform:translateX(20px);background:#171819}
+html.glass-mode body{background:radial-gradient(ellipse at top,#1b2b4d 0,#0b1020 55%)}
+html.glass-mode .panel,html.glass-mode .stat,html.glass-mode .item,html.glass-mode .settings-card,html.glass-mode .settings-category-tile{background:rgba(30,31,32,var(--glass-alpha))!important;border-color:#ffffff22!important;backdrop-filter:blur(var(--glass-blur)) saturate(165%);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(165%)}
+#account-security-modal{position:fixed;inset:0;z-index:100;background:#000b;display:flex;align-items:center;justify-content:center;padding:16px}
+#account-security-modal.hidden{display:none}
+.account-modal-card{width:min(100%,430px);padding:22px;border:1px solid #45464a;border-radius:18px;background:#1e1f20;box-shadow:0 20px 70px #0009}
+.account-modal-card input{width:100%;padding:12px;background:#131314;border:1px solid #45464a;border-radius:10px;color:#fff;margin:6px 0 12px}
+.account-modal-card button{width:100%;margin:5px 0}
+@media(max-width:420px){.settings-language-grid{grid-template-columns:1fr 1fr}.alu-accent-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
 </style>
 </head>
 <body>
@@ -18,7 +72,7 @@
     <div id="loginstatus" class="status" role="status"></div>
   </section>
   <section id="appview" class="hidden">
-    <header class="top"><div><div class="brand">1CE · CONSOLE ADMIN</div><h1>Tableau de bord</h1><div id="who" class="muted"></div></div><button id="logout">Déconnexion</button></header>
+    <header class="top"><div><div class="brand">1CE · CONSOLE ADMIN</div><h1>Tableau de bord</h1><div id="who" class="muted"></div></div><div class="row"><button id="settings-open" type="button" aria-label="Paramètres" title="Paramètres">⚙</button><button id="logout">Déconnexion</button></div></header>
     <div id="status" class="status" role="status"></div>
     <div id="stats" class="stats"></div>
     <nav class="tabs" aria-label="Sections">
@@ -28,6 +82,56 @@
     <div class="panel"><div class="itemhead"><div><h2 id="sectiontitle" style="margin:0 0 4px">Publications</h2><div id="sectionhint" class="muted">Gérer les contenus partagés dans la classe.</div></div></div><div id="items" class="items" style="margin-top:16px"></div></div>
   </section>
 </div>
+
+<div id="settings-screen" aria-hidden="true">
+ <header class="settings-header"><button id="settings-back-btn" aria-label="Retour">←</button><button id="settings-category-back" class="settings-category-back" style="display:none" aria-label="Retour aux catégories">‹</button><h2 class="settings-title" id="txt-settings-title">Paramètres</h2></header>
+ <div class="settings-content settings-organized">
+  <div id="settings-category-menu" class="settings-category-menu">
+   <button class="settings-category-tile" data-settings-category="account"><span>♙</span><span class="settings-category-copy"><strong id="txt-account-section">Compte</strong><small id="txt-account-description">Informations et sécurité du compte</small></span><span class="settings-chevron">›</span></button>
+   <button class="settings-category-tile" data-settings-category="language"><span>文</span><span class="settings-category-copy"><strong id="txt-lang-section">Langue</strong><small id="txt-language-description">Choisissez la langue de l’application</small></span><span class="settings-chevron">›</span></button>
+   <button class="settings-category-tile" data-settings-category="colors"><span>◉</span><span class="settings-category-copy"><strong id="txt-accent-section">Couleur d’accentuation</strong><small id="txt-color-description">Personnalisez les couleurs de l’interface</small></span><span class="settings-chevron">›</span></button>
+   <button class="settings-category-tile" data-settings-category="appearance"><span>◌</span><span class="settings-category-copy"><strong id="txt-appearance-section">Apparence</strong><small id="txt-appearance-description">Transparence et effet verre dépoli</small></span><span class="settings-chevron">›</span></button>
+  </div>
+  <section class="settings-card settings-category-panel" data-settings-panel="account" style="display:none">
+   <div class="settings-card-heading"><span>♙</span><div><h3>Compte</h3><p>Informations et sécurité du compte</p></div></div>
+   <div class="settings-account-row"><span>Nom</span><strong id="account-settings-name">—</strong></div>
+   <div class="settings-account-row"><span>Adresse e-mail</span><strong id="account-settings-email">—</strong></div>
+   <div class="settings-account-row"><span>Google</span><strong id="account-google-status">—</strong></div>
+   <button type="button" id="disconnect-google-btn" class="settings-action-btn">↗ Déconnecter Google</button>
+   <button type="button" id="change-password-btn" class="settings-action-btn">🔒 Changer mon mot de passe</button>
+   <button type="button" id="settings-logout-btn" class="settings-action-btn">⇥ Se déconnecter</button>
+   <button type="button" id="delete-account-btn" class="settings-action-btn danger" disabled title="La suppression sécurisée du compte n’est pas encore configurée pour ce projet">Supprimer définitivement mon compte (indisponible)</button>
+   <p class="settings-help-text">Un code de vérification sera envoyé par e-mail pour les opérations sensibles. La suppression de compte nécessite une procédure serveur dédiée qui n’est pas encore configurée sur ce projet.</p>
+  </section>
+  <section class="settings-card settings-category-panel" data-settings-panel="language" style="display:none">
+   <div class="settings-card-heading"><span>文</span><div><h3>Langue</h3><p>Choisissez la langue de l’application</p></div></div>
+   <div class="settings-language-grid">
+    <button data-lang="fr">🇫🇷 Français</button><button data-lang="pl">🇵🇱 Polski</button><button data-lang="en">🇬🇧 English</button><button data-lang="nl">🇳🇱 Nederlands</button><button data-lang="de">🇩🇪 Deutsch</button><button data-lang="es">🇪🇸 Español</button><button data-lang="it">🇮🇹 Italiano</button>
+   </div>
+  </section>
+  <section class="settings-card settings-category-panel" data-settings-panel="colors" style="display:none">
+   <div class="settings-card-heading"><span>◉</span><div><h3>Couleur d’accentuation</h3><p>Personnalisez les couleurs de l’interface</p></div></div>
+   <div class="alu-accent-grid">
+    <button class="alu-color-swatch" data-color="white" style="background:#e3e3e3">Blanc</button><button class="alu-color-swatch" data-color="red" style="background:#ef4444">Rouge</button><button class="alu-color-swatch" data-color="green" style="background:#22c55e">Vert</button><button class="alu-color-swatch" data-color="blue" style="background:#3b82f6">Bleu</button><button class="alu-color-swatch" data-color="mauve" style="background:#a78bfa">Mauve</button><button class="alu-color-swatch" data-color="pink" style="background:#ec4899">Rose</button><button class="alu-color-swatch" data-color="turquoise" style="background:#14b8a6">Turquoise</button><button class="alu-color-swatch" data-color="orange" style="background:#f97316">Orange</button>
+   </div>
+  </section>
+  <section class="settings-card settings-category-panel" data-settings-panel="appearance" style="display:none">
+   <div class="settings-card-heading"><span>◌</span><div><h3>Mode transparence</h3><p>Active un effet glassmorphism sur l’interface</p></div></div>
+   <div class="settings-appearance-row"><div><strong>Effet glassmorphism</strong><small>Rends les panneaux translucides et floutés</small></div><label class="settings-switch"><input type="checkbox" id="glass-mode-toggle"><span class="settings-switch-track"></span></label></div>
+  </section>
+ </div>
+</div>
+<div id="account-security-modal" class="hidden">
+ <div class="account-modal-card">
+  <h3 id="account-modal-title">Changer le mot de passe</h3><p id="account-modal-description" class="muted">Confirme ton identité avec le code envoyé par e-mail.</p>
+  <label>Adresse e-mail</label><input id="account-modal-email" type="email" autocomplete="email">
+  <button id="account-send-code-btn" class="primary" type="button">Envoyer le code</button>
+  <div id="account-code-step" class="hidden"><label>Code reçu par e-mail</label><input id="account-modal-code" inputmode="numeric" autocomplete="one-time-code" maxlength="8"><button id="account-verify-code-btn" class="primary" type="button">Vérifier le code</button></div>
+  <div id="account-password-step" class="hidden"><label>Nouveau mot de passe</label><input id="account-new-password" type="password" minlength="8" autocomplete="new-password"><label>Confirmer le mot de passe</label><input id="account-confirm-password" type="password" minlength="8" autocomplete="new-password"><button id="account-save-password-btn" class="primary" type="button">Enregistrer le nouveau mot de passe</button></div>
+  <button id="account-modal-cancel-btn" type="button">Annuler</button>
+ </div>
+</div>
+
 <script>
 (() => {
   const SUPABASE_URL = "https://fbqxuqkbywqvvynektqb.supabase.co";
@@ -37,6 +141,115 @@
   let session = null, data = null, activeTab = "posts", busy = false;
   const labels = {posts:"Publications",comments:"Commentaires",photos:"Photos",messages:"Messages",members:"Membres & bannissements"};
   const hints = {posts:"Supprime les publications qui ne doivent plus apparaître.",comments:"Modère les commentaires sous les publications.",photos:"Gère les photos partagées dans la galerie.",messages:"Gère les messages du chat de classe.",members:"Consulte les membres et gère les bannissements."};
+
+  let accountSecurityFlow=null, accountVerifiedForAction=false, accountVerifiedNonce=null;
+  const accentThemes={
+   white:["#e3e3e3","#e3e3e3","rgba(227,227,227,.14)"],red:["#f87171","#ef4444","rgba(239,68,68,.14)"],
+   green:["#4ade80","#22c55e","rgba(34,197,94,.14)"],blue:["#60a5fa","#3b82f6","rgba(59,130,246,.14)"],
+   mauve:["#c4b5fd","#a78bfa","rgba(167,139,250,.14)"],pink:["#f472b6","#ec4899","rgba(236,72,153,.14)"],
+   turquoise:["#2dd4bf","#14b8a6","rgba(20,184,166,.14)"],orange:["#fb923c","#f97316","rgba(249,115,22,.14)"]
+  };
+  const languageNames={fr:"Français",pl:"Polski",en:"English",nl:"Nederlands",de:"Deutsch",es:"Español",it:"Italiano"};
+  const settingsText={
+   fr:["Paramètres","Compte","Informations et sécurité du compte","Langue","Choisissez la langue de l’application","Couleur d’accentuation","Personnalisez les couleurs de l’interface","Apparence","Transparence et effet verre dépoli","Nom","Adresse e-mail","Connecté","Non connecté","Déconnecter Google","Changer mon mot de passe","Se déconnecter"],
+   en:["Settings","Account","Account information and security","Language","Choose the app language","Accent color","Customize interface colors","Appearance","Transparency and frosted-glass effect","Name","Email address","Connected","Not connected","Disconnect Google","Change password","Log out"],
+   nl:["Instellingen","Account","Accountgegevens en beveiliging","Taal","Kies de taal van de app","Accentkleur","Pas de interfacekleuren aan","Uiterlijk","Transparantie en matglaseffect","Naam","E-mailadres","Verbonden","Niet verbonden","Google ontkoppelen","Wachtwoord wijzigen","Uitloggen"],
+   pl:["Ustawienia","Konto","Informacje o koncie i bezpieczeństwo","Język","Wybierz język aplikacji","Kolor akcentu","Dostosuj kolory interfejsu","Wygląd","Przezroczystość i efekt matowego szkła","Imię","Adres e-mail","Połączono","Nie połączono","Odłącz Google","Zmień hasło","Wyloguj"],
+   de:["Einstellungen","Konto","Kontoinformationen und Sicherheit","Sprache","App-Sprache auswählen","Akzentfarbe","Oberflächenfarben anpassen","Darstellung","Transparenz und Milchglaseffekt","Name","E-Mail-Adresse","Verbunden","Nicht verbunden","Google trennen","Passwort ändern","Abmelden"],
+   es:["Ajustes","Cuenta","Información y seguridad de la cuenta","Idioma","Elige el idioma de la aplicación","Color de acento","Personaliza los colores de la interfaz","Apariencia","Transparencia y efecto de vidrio","Nombre","Correo electrónico","Conectado","No conectado","Desconectar Google","Cambiar contraseña","Cerrar sesión"],
+   it:["Impostazioni","Account","Informazioni e sicurezza dell’account","Lingua","Scegli la lingua dell’app","Colore di accento","Personalizza i colori dell’interfaccia","Aspetto","Trasparenza ed effetto vetro","Nome","Indirizzo e-mail","Connesso","Non connesso","Disconnetti Google","Cambia password","Esci"]
+  };
+  function applyAccentColor(key){
+   const t=accentThemes[key]||accentThemes.white;
+   document.documentElement.style.setProperty("--accent",t[0]);document.documentElement.style.setProperty("--accent-strong",t[1]);document.documentElement.style.setProperty("--accent-soft",t[2]);
+   document.querySelectorAll("[data-color]").forEach(b=>b.classList.toggle("active",b.dataset.color===key));
+   localStorage.setItem("alu_accent_color",key);
+  }
+  function applySettingsLanguage(lang){
+   const v=settingsText[lang]||settingsText.fr;const ids=["txt-settings-title","txt-account-section","txt-account-description","txt-lang-section","txt-language-description","txt-accent-section","txt-color-description","txt-appearance-section","txt-appearance-description"];
+   const indexes=[0,1,2,3,4,5,6,7,8];ids.forEach((id,i)=>{const el=$(id);if(el)el.textContent=v[indexes[i]];});
+   const panels=document.querySelectorAll("[data-settings-panel]");
+   const panelTitles=panels[0]?.querySelector("h3"), panelDesc=panels[0]?.querySelector("p");
+   if(panelTitles)panelTitles.textContent=v[1];if(panelDesc)panelDesc.textContent=v[2];
+   const langPanel=panels[1];if(langPanel){langPanel.querySelector("h3").textContent=v[3];langPanel.querySelector("p").textContent=v[4];}
+   const colorPanel=panels[2];if(colorPanel){colorPanel.querySelector("h3").textContent=v[5];colorPanel.querySelector("p").textContent=v[6];}
+   const appPanel=panels[3];if(appPanel){appPanel.querySelector("h3").textContent=v[7];appPanel.querySelector("p").textContent=v[8];}
+   const labels=[v[9],v[10],"Google"];document.querySelectorAll(".settings-account-row span").forEach((el,i)=>el.textContent=labels[i]||"Google");
+   $("disconnect-google-btn").textContent=v[13];$("change-password-btn").textContent=v[14];$("settings-logout-btn").textContent=v[15];
+   document.querySelectorAll("[data-lang]").forEach(b=>b.classList.toggle("active",b.dataset.lang===lang));
+   localStorage.setItem("alu_lang",lang);
+  }
+  function showSettingsCategory(category){
+   $("settings-category-menu").style.display="none";
+   document.querySelectorAll("[data-settings-panel]").forEach(p=>p.style.display=p.dataset.settingsPanel===category?"block":"none");
+   $("settings-category-back").style.display="inline-block";
+   const t=settingsText[localStorage.getItem("alu_lang")||"fr"]||settingsText.fr;
+   $("txt-settings-title").textContent=({account:t[1],language:t[3],colors:t[5],appearance:t[7]})[category]||t[0];
+   if(category==="account")refreshAccountSettings();
+  }
+  function showSettingsCategories(){
+   $("settings-category-menu").style.display="flex";document.querySelectorAll("[data-settings-panel]").forEach(p=>p.style.display="none");
+   $("settings-category-back").style.display="none";applySettingsLanguage(localStorage.getItem("alu_lang")||"fr");
+  }
+  async function refreshAccountSettings(){
+   $("account-settings-name").textContent=session?.user?.user_metadata?.display_name||session?.user?.user_metadata?.full_name||session?.user?.email?.split("@")[0]||"—";
+   $("account-settings-email").textContent=session?.user?.email||"—";$("account-google-status").textContent="—";$("disconnect-google-btn").disabled=true;
+   const {data:u,error}=await db.auth.getUser();if(error)return;
+   const ids=u.user?.identities||[],google=ids.find(x=>x.provider==="google");
+   const lang=localStorage.getItem("alu_lang")||"fr",t=settingsText[lang]||settingsText.fr;
+   $("account-google-status").textContent=google?t[11]:t[12];
+   $("disconnect-google-btn").disabled=!google||ids.length<2;
+   $("disconnect-google-btn").title=google&&ids.length<2?"Ajoute une autre méthode de connexion avant de déconnecter Google.":"";
+  }
+  function openSecurityModal(){
+   accountSecurityFlow="change-password";accountVerifiedForAction=false;accountVerifiedNonce=null;
+   $("account-modal-email").value=session?.user?.email||"";$("account-modal-email").readOnly=true;
+   $("account-modal-code").value="";$("account-new-password").value="";$("account-confirm-password").value="";
+   $("account-code-step").classList.add("hidden");$("account-password-step").classList.add("hidden");$("account-send-code-btn").classList.remove("hidden");
+   $("account-modal-title").textContent="Changer le mot de passe";
+   $("account-modal-description").textContent="Confirme ton identité avec le code envoyé à l’adresse e-mail du compte.";
+   $("account-security-modal").classList.remove("hidden");
+  }
+  async function sendVerificationCode(){
+   const {error}=await db.auth.reauthenticate();if(error)throw error;
+   $("account-code-step").classList.remove("hidden");$("account-send-code-btn").textContent="Renvoyer le code";
+   $("account-modal-description").textContent="Code envoyé. Vérifie aussi tes courriers indésirables.";
+  }
+  async function verifyVerificationCode(){
+   const token=$("account-modal-code").value.replace(/\D/g,"").trim();if(!token)throw new Error("Saisis le code reçu par e-mail.");
+   const {data:d,error}=await db.auth.getSession();if(error)throw error;if(!d.session?.access_token)throw new Error("Session expirée. Reconnecte-toi.");
+   accountVerifiedForAction=true;accountVerifiedNonce=token;
+   $("account-send-code-btn").classList.add("hidden");$("account-code-step").classList.add("hidden");$("account-password-step").classList.remove("hidden");
+   $("account-modal-description").textContent="Code reçu. Choisis maintenant ton nouveau mot de passe.";
+  }
+  async function saveNewPassword(){
+   if(!accountVerifiedForAction)throw new Error("Vérifie d’abord le code reçu.");
+   const p=$("account-new-password").value,c=$("account-confirm-password").value;
+   if(p.length<8)throw new Error("Le mot de passe doit contenir au moins 8 caractères.");
+   if(p!==c)throw new Error("Les deux mots de passe ne correspondent pas.");
+   const {error}=await db.auth.updateUser({password:p,nonce:accountVerifiedNonce});if(error)throw error;
+   accountVerifiedForAction=false;accountVerifiedNonce=null;$("account-security-modal").classList.add("hidden");alert("Mot de passe modifié avec succès.");
+  }
+  function wireSettings(){
+   $("settings-open").addEventListener("click",()=>{$("settings-screen").classList.add("open");$("settings-screen").setAttribute("aria-hidden","false");showSettingsCategories();});
+   $("settings-back-btn").addEventListener("click",()=>{$("settings-screen").classList.remove("open");$("settings-screen").setAttribute("aria-hidden","true");});
+   $("settings-category-back").addEventListener("click",showSettingsCategories);
+   document.querySelectorAll("[data-settings-category]").forEach(b=>b.addEventListener("click",()=>showSettingsCategory(b.dataset.settingsCategory)));
+   document.querySelectorAll("[data-lang]").forEach(b=>b.addEventListener("click",()=>applySettingsLanguage(b.dataset.lang)));
+   document.querySelectorAll("[data-color]").forEach(b=>b.addEventListener("click",()=>applyAccentColor(b.dataset.color)));
+   $("glass-mode-toggle").addEventListener("change",()=>{const on=$("glass-mode-toggle").checked;document.documentElement.classList.toggle("glass-mode",on);localStorage.setItem("alu_glass_enabled",on?"1":"0");});
+   $("change-password-btn").addEventListener("click",openSecurityModal);
+   $("disconnect-google-btn").addEventListener("click",async()=>{if(!confirm("Déconnecter Google de ce compte ?"))return;const {data:u,error}=await db.auth.getUser();if(error)throw error;const ids=u.user?.identities||[],identity=ids.find(x=>x.provider==="google");if(!identity||ids.length<2)throw new Error("Ajoute une autre méthode de connexion avant de déconnecter Google.");const {error:unlinkError}=await db.auth.unlinkIdentity(identity);if(unlinkError)throw unlinkError;await refreshAccountSettings();alert("Google a été déconnecté.");});
+   $("settings-logout-btn").addEventListener("click",async()=>{if(!confirm("Se déconnecter ?"))return;const {error}=await db.auth.signOut();if(error)alert(error.message);});
+   $("account-send-code-btn").addEventListener("click",async e=>{e.currentTarget.disabled=true;try{await sendVerificationCode();}catch(x){alert(x.message);}finally{e.currentTarget.disabled=false;}});
+   $("account-verify-code-btn").addEventListener("click",async e=>{e.currentTarget.disabled=true;try{await verifyVerificationCode();}catch(x){alert(x.message);}finally{e.currentTarget.disabled=false;}});
+   $("account-save-password-btn").addEventListener("click",async e=>{e.currentTarget.disabled=true;try{await saveNewPassword();}catch(x){alert(x.message);}finally{e.currentTarget.disabled=false;}});
+   $("account-modal-cancel-btn").addEventListener("click",()=>$("account-security-modal").classList.add("hidden"));
+   applyAccentColor(localStorage.getItem("alu_accent_color")||"white");
+   const glass=localStorage.getItem("alu_glass_enabled")==="1";$("glass-mode-toggle").checked=glass;document.documentElement.classList.toggle("glass-mode",glass);
+   applySettingsLanguage(localStorage.getItem("alu_lang")||"fr");
+  }
+
   const esc = v => String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const date = v => v ? new Date(v).toLocaleString("fr-FR",{dateStyle:"medium",timeStyle:"short"}) : "Date inconnue";
   function status(message,type=""){ $("status").textContent=message; $("status").className="status "+type; }
@@ -96,6 +309,7 @@
       await refresh();
     }catch(err){status(err.message,"error");}
   });
+  wireSettings();
   $("loginform").addEventListener("submit",async e=>{e.preventDefault();loginStatus("Connexion…");const {data:result,error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error){loginStatus("Connexion impossible. Vérifie ton e-mail et ton mot de passe.","error");return;}try{await enter(result.session);}catch(err){loginStatus(err.message,"error");}});
   $("logout").addEventListener("click",async()=>{await db.auth.signOut();session=null;data=null;$("appview").classList.add("hidden");$("loginview").classList.remove("hidden");loginStatus("Déconnecté.");});
   db.auth.onAuthStateChange((event)=>{if(event==="SIGNED_OUT"){session=null;data=null;}});
