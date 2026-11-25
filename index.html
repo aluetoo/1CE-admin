@@ -98,7 +98,7 @@
   });
   $("loginform").addEventListener("submit",async e=>{e.preventDefault();loginStatus("Connexion…");const {data:result,error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error){loginStatus("Connexion impossible. Vérifie ton e-mail et ton mot de passe.","error");return;}try{await enter(result.session);}catch(err){loginStatus(err.message,"error");}});
   $("logout").addEventListener("click",async()=>{await db.auth.signOut();session=null;data=null;$("appview").classList.add("hidden");$("loginview").classList.remove("hidden");loginStatus("Déconnecté.");});
-  db.auth.onAuthStateChange((event,s)=>{if(event==="SIGNED_IN"&&s)enter(s).catch(e=>loginStatus(e.message,"error"));if(event==="SIGNED_OUT"){session=null;}});
+  db.auth.onAuthStateChange((event)=>{if(event==="SIGNED_OUT"){session=null;data=null;}});
   db.auth.getSession().then(({data:d})=>{if(d.session)enter(d.session).catch(e=>loginStatus(e.message,"error"));});
 })();
 </script>
