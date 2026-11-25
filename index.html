@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1020"><title>1CE — Administration</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#141d32;--line:#293753;--text:#edf2ff;--muted:#9ba9c4;--accent:#829bff;--red:#f07887;--green:#52d6aa}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#1b2b4d 0,#0b1020 55%);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}button,input{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:11px;padding:10px 14px;background:#202d49;color:var(--text)}button:hover{filter:brightness(1.15)}button:disabled{opacity:.45;cursor:wait}.primary{background:var(--accent);color:#0a1020;border:0;font-weight:700}.danger{border-color:#75404d;color:#ffb2bb;background:#3a202d}.safe{border-color:#28604e;color:#8de6c5;background:#16362e}.muted{color:var(--muted)}.hidden{display:none!important}.wrap{max-width:1150px;margin:auto;padding:24px}.panel{background:#141d32eF;border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 18px 60px #0003}.login{max-width:420px;margin:10vh auto}.brand{font-size:13px;letter-spacing:.16em;color:#a9b9e8;font-weight:800}.login h1{font-size:28px;margin:8px 0 4px}.field{display:block;width:100%;padding:13px 14px;margin:8px 0 14px;background:#0c1426;border:1px solid var(--line);border-radius:10px;color:var(--text)}label{font-size:13px;color:var(--muted)}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:20px}.top h1{margin:4px 0;font-size:25px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.tab.active{background:var(--accent);color:#091020;border-color:transparent;font-weight:800}.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:14px 0}.stat{background:#0e172a;border:1px solid var(--line);padding:14px;border-radius:13px}.stat b{display:block;font-size:25px}.stat span{font-size:12px;color:var(--muted)}.items{display:grid;gap:10px}.item{padding:15px;background:#0e172a;border:1px solid var(--line);border-radius:13px;min-width:0}.itemhead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.item p{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0}.meta{font-size:12px;color:var(--muted);overflow-wrap:anywhere}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.empty{padding:28px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}.status{min-height:24px;color:var(--muted);margin:10px 0}.status.error{color:#ff9eaa}.status.ok{color:var(--green)}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row .field{max-width:220px;margin:0}.member{display:flex;justify-content:space-between;gap:12px;align-items:center}.pill{font-size:11px;padding:3px 8px;border-radius:99px;background:#273653;color:#c7d4f5}.pill.admin{background:#3d315b;color:#dfc9ff}@media(max-width:720px){.wrap{padding:14px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.top{align-items:flex-start}.top h1{font-size:21px}.panel{padding:14px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section id="loginview" class="panel login">
+    <div class="brand">1CE · ESPACE PRIVÉ</div><h1>Administration</h1>
+    <p class="muted">Connecte-toi avec ton compte administrateur de la classe.</p>
+    <form id="loginform"><label for="email">Adresse e-mail</label><input class="field" id="email" type="email" autocomplete="username" required><label for="password">Mot de passe</label><input class="field" id="password" type="password" autocomplete="current-password" required><button class="primary" style="width:100%" type="submit">Se connecter</button></form>
+    <div id="loginstatus" class="status" role="status"></div>
+  </section>
+  <section id="appview" class="hidden">
+    <header class="top"><div><div class="brand">1CE · CONSOLE ADMIN</div><h1>Tableau de bord</h1><div id="who" class="muted"></div></div><button id="logout">Déconnexion</button></header>
+    <div id="status" class="status" role="status"></div>
+    <div id="stats" class="stats"></div>
+    <nav class="tabs" aria-label="Sections">
+      <button class="tab active" data-tab="posts">Publications</button><button class="tab" data-tab="comments">Commentaires</button><button class="tab" data-tab="photos">Photos</button><button class="tab" data-tab="messages">Messages</button><button class="tab" data-tab="members">Membres & bans</button>
+      <button id="refresh">Actualiser</button>
+    </nav>
+    <div class="panel"><div class="itemhead"><div><h2 id="sectiontitle" style="margin:0 0 4px">Publications</h2><div id="sectionhint" class="muted">Gérer les contenus partagés dans la classe.</div></div></div><div id="items" class="items" style="margin-top:16px"></div></div>
+  </section>
+</div>
+<script>
+(() => {
+  const SUPABASE_URL = "https://fbqxuqkbywqvvynektqb.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_VC3uEiNgvTX_2-L4DcKmVw_LwAVJuB8";
+  const db = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+  const $ = id => document.getElementById(id);
+  let session = null, data = null, activeTab = "posts", busy = false;
+  const labels = {posts:"Publications",comments:"Commentaires",photos:"Photos",messages:"Messages",members:"Membres & bannissements"};
+  const hints = {posts:"Supprime les publications qui ne doivent plus apparaître.",comments:"Modère les commentaires sous les publications.",photos:"Gère les photos partagées dans la galerie.",messages:"Gère les messages du chat de classe.",members:"Consulte les membres et gère les bannissements."};
+  const esc = v => String(v ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const date = v => v ? new Date(v).toLocaleString("fr-FR",{dateStyle:"medium",timeStyle:"short"}) : "Date inconnue";
+  function status(message,type=""){ $("status").textContent=message; $("status").className="status "+type; }
+  function loginStatus(message,type=""){ $("loginstatus").textContent=message; $("loginstatus").className="status "+type; }
+  async function api(payload){
+    if(!session?.access_token) throw new Error("Session expirée. Reconnecte-toi.");
+    const response=await fetch(SUPABASE_URL+"/functions/v1/admin-control",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+session.access_token,"apikey":SUPABASE_KEY},body:JSON.stringify(payload)});
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok) throw new Error(result.error||"Erreur du serveur ("+response.status+").");
+    return result;
+  }
+  async function enter(s){
+    session=s;
+    const {data:member,error}=await db.from("class_members").select("display_name,role").eq("user_id",s.user.id).maybeSingle();
+    if(error||member?.role!=="admin"){await db.auth.signOut();session=null;$("appview").classList.add("hidden");$("loginview").classList.remove("hidden");loginStatus("Accès refusé : ce compte n'est pas administrateur.","error");return;}
+    $("loginview").classList.add("hidden");$("appview").classList.remove("hidden");$("who").textContent=(member.display_name||s.user.email)+" · administrateur";
+    await refresh();
+  }
+  async function refresh(){
+    if(busy)return;busy=true;status("Chargement des données…");
+    try{data=await api({action:"list"});renderStats();renderTab();status("Données actualisées.","ok");}
+    catch(e){status(e.message,"error");}
+    finally{busy=false;}
+  }
+  function renderStats(){
+    const active=(data.bans||[]).filter(b=>new Date(b.banned_until)>new Date()).length;
+    $("stats").innerHTML=[["posts","Publications"],["comments","Commentaires"],["photos","Photos"],["messages","Messages"],[null,"Bannissements actifs"]].map(([k,l])=>'<div class="stat"><b>'+ (k?data[k].length:active) +'</b><span>'+l+'</span></div>').join("");
+  }
+  function deleteButton(kind,id){return '<button class="danger" data-delete="'+kind+'" data-id="'+esc(id)+'">Supprimer</button>';}
+  function renderTab(){
+    $("sectiontitle").textContent=labels[activeTab];$("sectionhint").textContent=hints[activeTab];
+    const list=$( "items");
+    if(activeTab==="members"){
+      list.innerHTML=(data.members||[]).map(m=>{
+        const ban=(data.bans||[]).find(b=>b.user_id===m.user_id&&new Date(b.banned_until)>new Date());
+        return '<article class="item member"><div><strong>'+esc(m.display_name||"Membre")+'</strong> <span class="pill '+(m.role==="admin"?"admin":"")+'">'+esc(m.role||"membre")+'</span><div class="meta">'+esc(m.user_id)+'</div>'+(ban?'<div class="meta" style="color:#ffabb5">Banni jusqu’au '+date(ban.banned_until)+'</div>':'')+'</div><div class="actions">'+(m.role==="admin"?'':ban?'<button class="safe" data-unban="'+esc(m.user_id)+'">Lever le ban</button>':'<button data-ban="'+esc(m.user_id)+'">Bannir</button>')+'</div></article>';
+      }).join("")||'<div class="empty">Aucun membre.</div>';return;
+    }
+    const rows=data[activeTab]||[];
+    if(!rows.length){list.innerHTML='<div class="empty">Aucun élément dans cette section.</div>';return;}
+    list.innerHTML=rows.map(x=>{
+      const author=x.author_name||((data.members||[]).find(m=>m.user_id===x.uploader_id||m.user_id===x.author_id)?.display_name)||"Membre";
+      const content=activeTab==="photos"?(x.caption||"Photo sans légende"):(x.content||"");
+      const extra=activeTab==="photos"?'<div class="meta">Fichier : '+esc(x.object_path)+'</div>':activeTab==="comments"?'<div class="meta">Publication : '+esc(x.post_id)+'</div>':"";
+      return '<article class="item"><div class="itemhead"><strong>'+esc(author)+'</strong><span class="meta">'+date(x.created_at)+'</span></div><p>'+esc(content)+'</p>'+extra+'<div class="meta">ID : '+esc(x.id)+'</div><div class="actions">'+deleteButton(activeTab.slice(0,-1)==="phot"?"photo":activeTab.slice(0,-1),x.id)+'</div></article>';
+    }).join("");
+  }
+  document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>{activeTab=b.dataset.tab;document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x===b));renderTab();}));
+  $("refresh").addEventListener("click",refresh);
+  $("items").addEventListener("click",async e=>{
+    const del=e.target.closest("[data-delete]"),ban=e.target.closest("[data-ban]"),unban=e.target.closest("[data-unban]");
+    if(!del&&!ban&&!unban)return;
+    try{
+      if(del){if(!confirm("Supprimer définitivement cet élément ?"))return;await api({action:"delete",kind:del.dataset.delete,id:del.dataset.id});status("Élément supprimé.","ok");}
+      if(ban){const raw=prompt("Durée du bannissement en minutes (5 à 43200).", "30");if(raw===null)return;const minutes=Number(raw);if(!Number.isInteger(minutes)||minutes<5||minutes>43200)throw new Error("Durée invalide : indique un nombre de 5 à 43200 minutes.");await api({action:"ban",user_id:ban.dataset.ban,minutes});status("Membre banni.","ok");}
+      if(unban){if(!confirm("Lever le bannissement de ce membre ?"))return;await api({action:"unban",user_id:unban.dataset.unban});status("Bannissement levé.","ok");}
+      await refresh();
+    }catch(err){status(err.message,"error");}
+  });
+  $("loginform").addEventListener("submit",async e=>{e.preventDefault();loginStatus("Connexion…");const {data:result,error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error){loginStatus("Connexion impossible. Vérifie ton e-mail et ton mot de passe.","error");return;}try{await enter(result.session);}catch(err){loginStatus(err.message,"error");}});
+  $("logout").addEventListener("click",async()=>{await db.auth.signOut();session=null;data=null;$("appview").classList.add("hidden");$("loginview").classList.remove("hidden");loginStatus("Déconnecté.");});
+  db.auth.onAuthStateChange((event,s)=>{if(event==="SIGNED_IN"&&s)enter(s).catch(e=>loginStatus(e.message,"error"));if(event==="SIGNED_OUT"){session=null;}});
+  db.auth.getSession().then(({data:d})=>{if(d.session)enter(d.session).catch(e=>loginStatus(e.message,"error"));});
+})();
+</script>
+</body>
+</html>
